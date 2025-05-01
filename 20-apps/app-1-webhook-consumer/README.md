@@ -1,4 +1,4 @@
-# 1/100 simple webhook consumer
+# 1/20 simple webhook consumer
 This project is a simple webhook consumer built with Java, Spring Boot, and Temporal. It demonstrates how to use Temporal workflows to process and manage webhook events reliably.
 
 ## Features
@@ -49,8 +49,8 @@ cd docker-compose
 docker-compose up
 
 # run this app:
-git clone https://github.com/michael-oswald/100-temporal-apps.git
-cd 100-apps/app-1-webhook-consumer
+git clone https://github.com/michael-oswald/20-temporal-apps.git
+cd 20-apps/app-1-webhook-consumer
 ./mvnw spring-boot:run
 
 # dynamodb:
