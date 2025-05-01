@@ -1,6 +1,9 @@
 # 1/20 simple webhook consumer
 This project is a simple webhook consumer built with Java, Spring Boot, and Temporal. It demonstrates how to use Temporal workflows to process and manage webhook events reliably.
 
+# Blog post link
+https://michaeloswald.beehiiv.com/p/1-of-20-temporal-app-challenge-using-temporal-in-a-webhook-consumer
+
 ## Features
 - Receives webhook events via REST API
 - Processes events through Temporal workflows
