@@ -17,6 +17,7 @@ import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,36 +54,19 @@ public class MemoryService {
         logger.info("Started memory workflow with ID: {}", workflowId);
     }
 
-    public MemoryWorkflowImpl.Memory getMemoryByUserAndCategory(String userId, String categoryId) {
+    public List<MemoryWorkflowImpl.Memory> getMemoryByUserAndCategory(String userId, String categoryId) {
         logger.info("Retrieving memory from DynamoDB for userId: {}, categoryId: {}", userId, categoryId);
-        return getMemory(userId, categoryId);
+        return getMemoryByUserIdAndCategoryId(userId, categoryId);
     }
 
-    public MemoryWorkflowImpl.Memory getMemory(String userId, String categoryId) {
-        // Logic to retrieve memory from DynamoDB
-        var key = new HashMap<String, AttributeValue>();
-        key.put("userId", AttributeValue.builder().s(userId).build());
-        key.put("categoryId", AttributeValue.builder().s(categoryId).build());
+    public List<MemoryWorkflowImpl.Memory> getMemoryByUserIdAndCategoryId(String userId, String categoryId) {
+        // for now just get all memoriesByUserId
+        var allMemories = getAllMemoriesByUserId(userId);
 
-        GetItemRequest request = GetItemRequest.builder()
-                .tableName(TABLE_NAME)
-                .key(key)
-                .build();
-
-        var item = dynamoDbClient.getItem(request).item();
-        if (item == null || item.isEmpty()) {
-            throw new RuntimeException("Memory not found for userId: " + userId + ", categoryId: " + categoryId);
-        }
-
-        var memory = new MemoryWorkflowImpl.Memory();
-        memory.setUserId(item.get("userId").s());
-        memory.setMemoryId(item.get("memoryId").s());
-        memory.setText(item.get("text").s());
-        memory.setCategory(item.get("category").s());
-        memory.setCreatedAt(item.get("createdAt").s());
-        memory.setDueAt(item.get("dueAt") != null ? item.get("dueAt").s() : null);
-
-        return memory;
+        // Filter the memories by categoryId
+        return allMemories.stream()
+                .filter(memory -> memory.getCategory().equals(categoryId))
+                .toList();
     }
 
 
@@ -117,5 +101,79 @@ public class MemoryService {
         }
 
         return memories;
+    }
+
+    public void deleteMemoryByUserIdAndMemoryId(String userId, String memoryId) {
+        try {
+            logger.info("Deleting memory from DynamoDB for userId: {}, memoryId: {}", userId, memoryId);
+
+            // Create key for the item to delete
+            var key = new HashMap<String, AttributeValue>();
+            key.put("userId", AttributeValue.builder().s(userId).build());
+            key.put("memoryId", AttributeValue.builder().s(memoryId).build());
+
+            // Create delete item request
+            var deleteRequest = software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest.builder()
+                    .tableName(TABLE_NAME)
+                    .key(key)
+                    .build();
+
+            // Execute delete operation
+            dynamoDbClient.deleteItem(deleteRequest);
+
+            logger.info("Successfully deleted memory for userId: {}, memoryId: {}", userId, memoryId);
+        } catch (Exception e) {
+            logger.error("Error deleting memory for userId: {}, memoryId: {}", userId, memoryId, e);
+            throw e;
+        }
+    }
+
+    public void updateMemoryByUserIdAndMemoryId(String userId, String memoryId, MemoryController.MemoryRequest payload) {
+        try {
+            logger.info("Updating memory in DynamoDB for userId: {}, memoryId: {}", userId, memoryId);
+
+            // Create key for the item to update
+            var key = new HashMap<String, AttributeValue>();
+            key.put("userId", AttributeValue.builder().s(userId).build());
+            key.put("memoryId", AttributeValue.builder().s(memoryId).build());
+
+            // Create update expression and attribute values
+            var updateExpression = new StringBuilder("SET ");
+            var expressionAttributeValues = new HashMap<String, AttributeValue>();
+
+            if (payload.text != null) {
+                updateExpression.append("text = :text, ");
+                expressionAttributeValues.put(":text", AttributeValue.builder().s(payload.text).build());
+            }
+            if (payload.category != null) {
+                updateExpression.append("category = :category, ");
+                expressionAttributeValues.put(":category", AttributeValue.builder().s(payload.category).build());
+            }
+            if (payload.dueAt != null) {
+                updateExpression.append("dueAt = :dueAt, ");
+                expressionAttributeValues.put(":dueAt", AttributeValue.builder().s(payload.dueAt.toString()).build());
+            }
+
+            // Remove trailing comma and space
+            if (updateExpression.toString().endsWith(", ")) {
+                updateExpression.setLength(updateExpression.length() - 2);
+            }
+
+            // Create update item request
+            var updateRequest = software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest.builder()
+                    .tableName(TABLE_NAME)
+                    .key(key)
+                    .updateExpression(updateExpression.toString())
+                    .expressionAttributeValues(expressionAttributeValues)
+                    .build();
+
+            // Execute update operation
+            dynamoDbClient.updateItem(updateRequest);
+
+            logger.info("Successfully updated memory for userId: {}, memoryId: {}", userId, memoryId);
+        } catch (Exception e) {
+            logger.error("Error updating memory for userId: {}, memoryId: {}", userId, memoryId, e);
+            throw e;
+        }
     }
 }

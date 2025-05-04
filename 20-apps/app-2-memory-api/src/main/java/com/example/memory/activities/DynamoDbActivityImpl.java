@@ -38,8 +38,11 @@ public class DynamoDbActivityImpl implements DynamoDbActivity {
             item.put("text", AttributeValue.builder().s(memory.getText()).build());
             item.put("category", AttributeValue.builder().s(memory.getCategory()).build());
             item.put("createdAt", AttributeValue.builder().s(memory.getCreatedAt()).build());
-            item.put("dueAt", AttributeValue.builder().s(memory.getDueAt()).build());
-            item.put("completed", AttributeValue.builder().bool(memory.isCompleted()).build());
+            if (memory.getDueAt() != null) {
+                item.put("dueAt", AttributeValue.builder().s(memory.getDueAt()).build());
+            }
+            //item.put("dueAt", AttributeValue.builder().s(memory.getDueAt()).build());
+            item.put("status", AttributeValue.builder().s(memory.getStatus()).build());
 
             // Create put item request
             var request = PutItemRequest.builder()

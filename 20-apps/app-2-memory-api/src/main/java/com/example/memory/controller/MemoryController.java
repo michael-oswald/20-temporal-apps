@@ -52,8 +52,8 @@ public class MemoryController {
     public ResponseEntity<?> getMemoryByUserAndCategory(@PathVariable String userId, @PathVariable String categoryId) {
         try {
             logger.info("Fetching memory for userId: {}, categoryId: {}", userId, categoryId);
-            MemoryWorkflowImpl.Memory memory = memoryService.getMemoryByUserAndCategory(userId, categoryId);
-            return ResponseEntity.ok(memory);
+            var memories = memoryService.getMemoryByUserAndCategory(userId, categoryId);
+            return ResponseEntity.ok(memories);
         } catch (Exception e) {
             logger.error("Error fetching memory for userId: {}, categoryId: {}", userId, categoryId, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -73,7 +73,34 @@ public class MemoryController {
                     .body("Error fetching memories: " + e.getMessage());
         }
     }
+    @DeleteMapping("/{userId}/{memoryId}")
+    public ResponseEntity<?> deleteMemoryByUserIdAndMemoryId(@PathVariable String userId, @PathVariable String memoryId) {
+        try {
+            logger.info("Deleting memory for userId: {}, memoryId: {}", userId, memoryId);
+            memoryService.deleteMemoryByUserIdAndMemoryId(userId, memoryId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            logger.error("Error deleting memory for userId: {}, memoryId: {}", userId, memoryId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting memory: " + e.getMessage());
+        }
+    }
 
+    @PutMapping("/{userId}/{memoryId}")
+    public ResponseEntity<?> updateMemoryByUserIdAndMemoryId(
+            @PathVariable String userId,
+            @PathVariable String memoryId,
+            @RequestBody @Valid MemoryRequest payload) {
+        try {
+            logger.info("Updating memory for userId: {}, memoryId: {}", userId, memoryId);
+            memoryService.updateMemoryByUserIdAndMemoryId(userId, memoryId, payload);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            logger.error("Error updating memory for userId: {}, memoryId: {}", userId, memoryId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating memory: " + e.getMessage());
+        }
+    }
 
 
     public static class MemoryRequest {
