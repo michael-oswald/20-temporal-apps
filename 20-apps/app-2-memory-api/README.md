@@ -5,7 +5,7 @@ This project is a rest api to support a custom GPT app called memory-gpt.
 https://michaeloswald.beehiiv.com/p/2-of-20-temporal-app-challenge-using-temporal-in-a-custom-gpt-app-bb66
 
 # Youtube Video Link
-https://youtu.be/b51FHEH1YNI
+Coming soon.
 
 ## Features
 - REST API made for storing retrieving and updating your need to remember things "your memories"
