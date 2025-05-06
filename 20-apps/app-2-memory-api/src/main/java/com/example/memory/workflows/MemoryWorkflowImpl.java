@@ -32,7 +32,7 @@ public class MemoryWorkflowImpl implements MemoryWorkflow {
         memory.setStatus(PENDING);
         memory.setCreatedAt(Instant.now().toString());
         memory.setDueAt(memoryRequest.dueAt == null ? null : memoryRequest.dueAt.toString());
-
+        memory.setStatus(memoryRequest.status.name());
         // Save memory to DynamoDB
         dynamoDbActivity.saveMemory(memory);
 

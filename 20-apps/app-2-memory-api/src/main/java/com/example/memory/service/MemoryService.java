@@ -153,6 +153,10 @@ public class MemoryService {
                 updateExpression.append("dueAt = :dueAt, ");
                 expressionAttributeValues.put(":dueAt", AttributeValue.builder().s(payload.dueAt.toString()).build());
             }
+            if (payload.status != null) {
+                updateExpression.append("status = :status, ");
+                expressionAttributeValues.put(":status", AttributeValue.builder().s(payload.status.toString()).build());
+            }
 
             // Remove trailing comma and space
             if (updateExpression.toString().endsWith(", ")) {

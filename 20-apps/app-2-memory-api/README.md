@@ -1,47 +1,37 @@
-# 1/20 simple webhook consumer
-This project is a simple webhook consumer built with Java, Spring Boot, and Temporal. It demonstrates how to use Temporal workflows to process and manage webhook events reliably.
+# 2/20 simple REST API for custom GPT app (using Temporal workflow for POST API)
+This project is a rest api to support a custom GPT app called memory-gpt.
 
 # Blog post link
-https://michaeloswald.beehiiv.com/p/1-of-20-temporal-app-challenge-using-temporal-in-a-webhook-consumer
+https://michaeloswald.beehiiv.com/p/2-of-20-temporal-app-challenge-using-temporal-in-a-custom-gpt-app-bb66
+
+# Youtube Video Link
+
 
 ## Features
-- Receives webhook events via REST API
-- Processes events through Temporal workflows
-- Idempotency check through Temporal by setting unique workflowId per event
-- Provides durable execution with automatic retries
-- Saves webhook data to AWS Dynamodb
-- Handles event history and status tracking via Temporal
+- REST API made for storing retrieving and updating your need to remember things "your memories"
+- Tempora
 
 ## Technologies
+- ChatGPT (for the custom GPT app)
 - Java
 - Spring Boot
 - Temporal
 - DynamoDB (for event storage)
-- Maven
 
-## Sequence Diagram
+## Sequence Diagram (POST API FLOW)
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant WebhookAPI as Webhook API
-    participant Workflow as Temporal Workflow
-    participant Server as Temporal Server
-    participant Worker as Temporal Worker
-    participant Activity as Temporal Activity
+    participant MemoryGPT
+    participant REST API
+    participant Temporal
     participant DynamoDB
 
-    Client->>WebhookAPI: POST /webhook (event data)
-    WebhookAPI->>Workflow: Start Workflow 
-    Workflow->>Server: Workflow Task Recorded
-    WebhookAPI-->>Client: 200 OK
-    Worker->>Server: Fetch Workflow task
-    Worker->>Activity: Execute Workflow Task
-    Activity->>DynamoDB: Store event data
-    Worker->>Server: Finished Workflow task ✅
-    
-    
-    
+    MemoryGPT->>REST API: POST /api/webhook
+    REST API->>Temporal: Start Workflow
+    REST API-->>MemoryGPT: 200 OK
+    Temporal->>DynamoDB: Store Memory
+    DynamoDB-->>Temporal: Memory stored
  ```
 
 ## Running locally:
@@ -53,18 +43,21 @@ docker-compose up
 
 # run this app:
 git clone https://github.com/michael-oswald/20-temporal-apps.git
-cd 20-apps/app-1-webhook-consumer
+cd 20-apps/app-2-memory-api
 ./mvnw spring-boot:run
 
 # dynamodb:
-You'll need to run a local dynamodb, or create a dynamodb table in your AWS account and set the table name as example-webhooks.
+You'll need to run a local dynamodb, or create a dynamodb table in your AWS account and set the table name as `gpt-memory`.
 
 # testing with curl:
-curl --location 'localhost:8081/api/webhook' \
+curl --location 'http://localhost:8081/api/memory' \
 --header 'Content-Type: application/json' \
 --data '{
-    "webhookId":"53698243-0425-4a76-9492-909b3cb34c01",
-    "data":"all kinds of important data",
-    "createdAt":"2025-04-30T12:51:44.837Z"
+  "userId": "exampleUserId",
+  "uniqueMemoryId": "16f8df7e-0cb9-481b-9067-a69ed6ddc19e",
+  "text": "This is a test memory",
+  "category": "otherCategory",
+  "dueAt": "2023-12-31T23:59:59",
+  "status":"NEW"
 }'
 ```

@@ -102,7 +102,6 @@ public class MemoryController {
         }
     }
 
-
     public static class MemoryRequest {
         @NotNull(message = "userId is required")
         public String userId;
@@ -113,6 +112,13 @@ public class MemoryController {
         @NotNull(message = "category is required")
         public String category;
         public LocalDateTime dueAt;
+        @NotNull(message = "status is required")
+        public Status status;
+        public enum Status {
+            NEW,
+            IN_PROGRESS,
+            COMPLETED,
+            ARCHIVED
+        }
     }
 }
-

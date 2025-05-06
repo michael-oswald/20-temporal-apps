@@ -25,6 +25,9 @@ public class TemporalConfig {
     @Value("${temporal.taskqueue:MemoryTaskQueue}")
     private String taskQueue;
 
+    @Value("${temporal.reminder.taskqueue:ReminderTaskQueue}")
+    private String reminderTaskQueue;
+
     @Bean
     public WorkflowServiceStubs workflowServiceStubs() {
         return WorkflowServiceStubs.newInstance(
@@ -47,7 +50,7 @@ public class TemporalConfig {
     }
 
     @Bean
-    public Worker worker(WorkerFactory workerFactory, DynamoDbActivityImpl dynamoDbActivity) {
+    public Worker memoryWorker(WorkerFactory workerFactory, DynamoDbActivityImpl dynamoDbActivity) {
         Worker worker = workerFactory.newWorker(taskQueue);
         worker.registerWorkflowImplementationTypes(MemoryWorkflowImpl.class);
         worker.registerActivitiesImplementations(dynamoDbActivity);
