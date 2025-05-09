@@ -49,7 +49,7 @@ public class EmailActivitiesImpl implements EmailActivities {
             emailService.send(to, body); // external side-effect
         } catch (Exception e) {
             // Optionally: mark as FAILED or clean up the reserved entry
-            logger.error("Failed to send email: {}", e.getMessage());
+            logger.error("Failed to send email: {}, {}, {}", to, body, e.getMessage(), e);
             throw e; // Let Temporal retry
         }
 
