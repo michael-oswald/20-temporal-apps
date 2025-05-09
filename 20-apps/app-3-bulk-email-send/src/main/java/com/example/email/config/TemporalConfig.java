@@ -1,17 +1,20 @@
-package com.example.memory.config;
+package com.example.email.config;
 
 
-
+import com.example.email.activities.EmailActivitiesImpl;
+import com.example.email.service.EmailService;
+import com.example.email.workflows.EmailBatchWorkflowImpl;
+import com.example.email.workflows.EmailCampaignWorkflowImpl;
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowClientOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 @Configuration
 public class TemporalConfig {
@@ -22,11 +25,8 @@ public class TemporalConfig {
     @Value("${temporal.namespace:default}")
     private String temporalNamespace;
 
-    @Value("${temporal.taskqueue:MemoryTaskQueue}")
+    @Value("${temporal.taskqueue:BatchEmailTaskQueue}")
     private String taskQueue;
-
-    @Value("${temporal.reminder.taskqueue:ReminderTaskQueue}")
-    private String reminderTaskQueue;
 
     @Bean
     public WorkflowServiceStubs workflowServiceStubs() {
@@ -50,11 +50,16 @@ public class TemporalConfig {
     }
 
     @Bean
-    public Worker memoryWorker(WorkerFactory workerFactory, DynamoDbActivityImpl dynamoDbActivity) {
+    public Worker worker(WorkerFactory workerFactory, EmailActivitiesImpl emailActivities) {
         Worker worker = workerFactory.newWorker(taskQueue);
-        worker.registerWorkflowImplementationTypes(MemoryWorkflowImpl.class);
-        worker.registerActivitiesImplementations(dynamoDbActivity);
+        worker.registerWorkflowImplementationTypes(EmailCampaignWorkflowImpl.class, EmailBatchWorkflowImpl.class);
+        worker.registerActivitiesImplementations(emailActivities);
         workerFactory.start();
         return worker;
+    }
+
+    @Bean
+    public EmailActivitiesImpl emailActivities(EmailService emailService, DynamoDbClient dynamoDbClient) {
+        return new EmailActivitiesImpl(emailService, dynamoDbClient);
     }
 }

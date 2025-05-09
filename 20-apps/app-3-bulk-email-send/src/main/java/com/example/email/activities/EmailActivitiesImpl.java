@@ -1,6 +1,6 @@
-package com.example.memory.activities;
+package com.example.email.activities;
 
-import com.example.memory.service.EmailService;
+import com.example.email.service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;

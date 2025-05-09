@@ -1,7 +1,7 @@
-package com.example.memory.workflows;
+package com.example.email.workflows;
 
-import com.example.memory.Email;
-import com.example.memory.activities.EmailActivities;
+import com.example.email.Email;
+import com.example.email.activities.EmailActivities;
 import io.temporal.activity.ActivityOptions;
 import io.temporal.common.RetryOptions;
 import io.temporal.workflow.Workflow;

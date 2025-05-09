@@ -1,7 +1,7 @@
-package com.example.memory.controller;
+package com.example.email.controller;
 
-import com.example.memory.Email;
-import com.example.memory.service.MemoryService;
+import com.example.email.Email;
+import com.example.email.service.BatchEmailService;
 import io.temporal.client.WorkflowExecutionAlreadyStarted;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -18,16 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/memory")
-public class MemoryController {
+@RequestMapping("/api/email")
+public class BatchEmailController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MemoryController.class);
+    private static final Logger logger = LoggerFactory.getLogger(BatchEmailController.class);
 
     @Autowired
-    private MemoryService memoryService;
+    private BatchEmailService batchEmailService;
 
-    @PostMapping
-    public ResponseEntity<?> postMemoryRequest(@RequestBody @Valid MemoryController.BatchEmailSendRequest payload) {
+    @PostMapping("/batch")
+    public ResponseEntity<?> batchSend(@RequestBody @Valid BatchEmailController.BatchEmailSendRequest payload) {
         try {
 
             logger.info("Received payload: {}", payload);
@@ -35,7 +35,7 @@ public class MemoryController {
             String workflowId = "workflowId-" + payload.uniqueEmailBatchId;
 
             // Start a Temporal workflow
-            memoryService.startWorkflow(workflowId, payload);
+            batchEmailService.startWorkflow(workflowId, payload);
             logger.info("Started Temporal workflow with ID: {}", workflowId);
 
            return ResponseEntity.ok().build();

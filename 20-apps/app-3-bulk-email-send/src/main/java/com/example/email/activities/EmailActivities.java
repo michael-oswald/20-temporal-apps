@@ -1,4 +1,4 @@
-package com.example.memory.activities;
+package com.example.email.activities;
 
 import io.temporal.activity.ActivityInterface;
 import io.temporal.activity.ActivityMethod;

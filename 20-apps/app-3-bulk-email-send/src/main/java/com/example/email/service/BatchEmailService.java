@@ -1,7 +1,7 @@
-package com.example.memory.service;
+package com.example.email.service;
 
-import com.example.memory.controller.MemoryController;
-import com.example.memory.workflows.EmailCampaignWorkflow;
+import com.example.email.controller.BatchEmailController;
+import com.example.email.workflows.EmailCampaignWorkflow;
 import io.temporal.api.enums.v1.WorkflowIdReusePolicy;
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowOptions;
@@ -13,23 +13,23 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 @Service
-public class MemoryService {
-    private static final Logger logger = LoggerFactory.getLogger(MemoryService.class);
+public class BatchEmailService {
+    private static final Logger logger = LoggerFactory.getLogger(BatchEmailService.class);
 
     private final WorkflowClient workflowClient;
     private final String taskQueue;
     private final DynamoDbClient dynamoDbClient;
 
     @Autowired
-    public MemoryService(WorkflowClient workflowClient,
-                         @Value("${temporal.taskqueue:BatchEmailTaskQueue}") String taskQueue,
-                         DynamoDbClient dynamoDbClient) {
+    public BatchEmailService(WorkflowClient workflowClient,
+                             @Value("${temporal.taskqueue:BatchEmailTaskQueue}") String taskQueue,
+                             DynamoDbClient dynamoDbClient) {
         this.workflowClient = workflowClient;
         this.taskQueue = taskQueue;
         this.dynamoDbClient = dynamoDbClient;
     }
 
-    public void startWorkflow(String workflowId, MemoryController.BatchEmailSendRequest payload) {
+    public void startWorkflow(String workflowId, BatchEmailController.BatchEmailSendRequest payload) {
         EmailCampaignWorkflow workflow = workflowClient.newWorkflowStub(
                 EmailCampaignWorkflow.class,
                 WorkflowOptions.newBuilder()
@@ -40,6 +40,6 @@ public class MemoryService {
 
         // Asynchronously start the workflow and continue immediately
         WorkflowClient.start(workflow::startEmailCampaign, payload.emails);
-        logger.info("Started memory workflow with ID: {}", workflowId);
+        logger.info("Started startEmailCampaign workflow with ID: {}", workflowId);
     }
 }

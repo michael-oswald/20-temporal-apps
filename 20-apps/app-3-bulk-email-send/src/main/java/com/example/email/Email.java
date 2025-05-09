@@ -1,4 +1,4 @@
-package com.example.memory;
+package com.example.email;
 
 public class Email {
     private String emailId;

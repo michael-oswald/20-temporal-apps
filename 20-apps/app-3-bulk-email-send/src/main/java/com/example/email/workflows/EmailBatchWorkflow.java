@@ -1,6 +1,6 @@
-package com.example.memory.workflows;
+package com.example.email.workflows;
 
-import com.example.memory.Email;
+import com.example.email.Email;
 import io.temporal.workflow.WorkflowInterface;
 import io.temporal.workflow.WorkflowMethod;
 

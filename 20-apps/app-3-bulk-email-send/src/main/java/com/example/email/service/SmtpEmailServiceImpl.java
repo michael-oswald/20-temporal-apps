@@ -1,5 +1,6 @@
-package com.example.memory.service;
+package com.example.email.service;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
@@ -8,16 +9,20 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.Properties;
 
+@Service
 public class SmtpEmailServiceImpl implements EmailService {
-    private final Session session;
-    private final String fromEmail;
+    private Session session;
     private static final Logger logger = LoggerFactory.getLogger(SmtpEmailServiceImpl.class);
+    @Value("${email.from:noreply@example.com}")
+    private String defaultFromEmail;
 
-    public SmtpEmailServiceImpl(String fromEmail) {
-        this.fromEmail = fromEmail;
+    @PostConstruct
+    public void init() {
         this.session = createMailSession();
     }
 
@@ -35,7 +40,7 @@ public class SmtpEmailServiceImpl implements EmailService {
     public void send(String toEmail, String bodyText) {
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(fromEmail));
+            message.setFrom(new InternetAddress(defaultFromEmail));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             message.setSubject("Test Email from SmtpEmailService");
             message.setText(bodyText);
