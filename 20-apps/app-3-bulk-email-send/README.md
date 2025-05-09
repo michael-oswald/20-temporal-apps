@@ -1,5 +1,6 @@
-# 2/20 simple REST API for custom GPT app (using Temporal workflow for POST API)
-This project is a rest api to support a custom GPT app called memory-gpt.
+# 2/20 simple bulk email send app
+✅ Use Case
+Send thousands of emails. Each should be sent only once, even if retries or replays happen.
 
 # Blog post link
 https://michaeloswald.beehiiv.com/p/2-of-20-temporal-app-challenge-using-temporal-in-a-custom-gpt-app-bb66
@@ -9,7 +10,7 @@ https://youtu.be/b51FHEH1YNI
 
 ## Features
 - REST API made for storing retrieving and updating your need to remember things "your memories"
-- Tempora
+- Temporal
 
 ## Technologies
 - ChatGPT (for the custom GPT app)

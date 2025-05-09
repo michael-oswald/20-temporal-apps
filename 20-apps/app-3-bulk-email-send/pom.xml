@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>memory-api</artifactId>
+	<artifactId>bulk-email-send</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>memory-api</name>
-	<description>memory-api</description>
+	<name>bulk-email-send</name>
+	<description>bulk-email-send</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -47,6 +47,11 @@
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>dynamodb</artifactId>
 			<version>2.20.26</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.angus</groupId>
+			<artifactId>jakarta.mail</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
