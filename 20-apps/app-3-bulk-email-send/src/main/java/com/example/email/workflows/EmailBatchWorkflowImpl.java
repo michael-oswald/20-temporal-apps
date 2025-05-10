@@ -3,7 +3,6 @@ package com.example.email.workflows;
 import com.example.email.Email;
 import com.example.email.activities.EmailActivities;
 import io.temporal.activity.ActivityOptions;
-import io.temporal.common.RetryOptions;
 import io.temporal.workflow.Workflow;
 
 import java.time.Duration;
@@ -15,9 +14,6 @@ public class EmailBatchWorkflowImpl implements EmailBatchWorkflow {
             EmailActivities.class,
             ActivityOptions.newBuilder()
                     .setStartToCloseTimeout(Duration.ofMinutes(1))
-                    .setRetryOptions(RetryOptions.newBuilder()
-                            .setMaximumAttempts(3)
-                            .build())
                     .build()
     );
 

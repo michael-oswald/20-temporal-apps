@@ -7,30 +7,26 @@ import io.temporal.workflow.Workflow;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 public class EmailCampaignWorkflowImpl implements EmailCampaignWorkflow {
 
     @Override
     public void startEmailCampaign(List<Email> allEmails) {
-        var batchSize = 100;
+        var batchSize = Math.max(10, allEmails.size() / 10); // 10 child workflows max
         var chunks = chunkList(allEmails, batchSize);
-        List<Promise<Void>> children = new ArrayList<>();
+        var children = new ArrayList<Promise<Void>>();
 
-        for (List<Email> chunk : chunks) {
+        for (var chunk : chunks) {
             EmailBatchWorkflow child = Workflow.newChildWorkflowStub(EmailBatchWorkflow.class); // child workflow
             children.add(Async.procedure(() -> child.sendEmails(chunk)));
         }
 
-        try {
-            Promise.allOf(children).get(30, java.util.concurrent.TimeUnit.MINUTES); // Wait for all children to complete with 30m timeout
-        } catch (TimeoutException e) {
-            throw new RuntimeException(e);
-        }
+        Promise.allOf(children).get(); // Waits indefinitely
+
     }
 
     private List<List<Email>> chunkList(List<Email> emails, int size) {
-        List<List<Email>> chunks = new ArrayList<>();
+        var chunks = new ArrayList<List<Email>>();
         for (int i = 0; i < emails.size(); i += size) {
             chunks.add(emails.subList(i, Math.min(i + size, emails.size())));
         }

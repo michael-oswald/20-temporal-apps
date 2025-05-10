@@ -14,7 +14,6 @@ import io.temporal.worker.WorkerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 @Configuration
 public class TemporalConfig {
@@ -59,7 +58,7 @@ public class TemporalConfig {
     }
 
     @Bean
-    public EmailActivitiesImpl emailActivities(EmailService emailService, DynamoDbClient dynamoDbClient) {
-        return new EmailActivitiesImpl(emailService, dynamoDbClient);
+    public EmailActivitiesImpl emailActivities(EmailService emailService) {
+        return new EmailActivitiesImpl(emailService);
     }
 }
