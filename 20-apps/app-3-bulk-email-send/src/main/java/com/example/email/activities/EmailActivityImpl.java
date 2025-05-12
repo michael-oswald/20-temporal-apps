@@ -4,12 +4,12 @@ import com.example.email.service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EmailActivitiesImpl implements EmailActivities {
+public class EmailActivityImpl implements EmailActivity {
 
     private final EmailService emailService;
-    private static final Logger logger = LoggerFactory.getLogger(EmailActivitiesImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(EmailActivityImpl.class);
 
-    public EmailActivitiesImpl(EmailService emailService) {
+    public EmailActivityImpl(EmailService emailService) {
         this.emailService = emailService;
     }
 

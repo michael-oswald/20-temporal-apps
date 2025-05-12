@@ -1,7 +1,7 @@
 package com.example.email.workflows;
 
 import com.example.email.Email;
-import com.example.email.activities.EmailActivities;
+import com.example.email.activities.EmailActivity;
 import io.temporal.activity.ActivityOptions;
 import io.temporal.workflow.Workflow;
 
@@ -10,8 +10,8 @@ import java.util.List;
 
 public class EmailBatchWorkflowImpl implements EmailBatchWorkflow {
 
-    private final EmailActivities activities = Workflow.newActivityStub(
-            EmailActivities.class,
+    private final EmailActivity activities = Workflow.newActivityStub(
+            EmailActivity.class,
             ActivityOptions.newBuilder()
                     .setStartToCloseTimeout(Duration.ofMinutes(1))
                     .build()

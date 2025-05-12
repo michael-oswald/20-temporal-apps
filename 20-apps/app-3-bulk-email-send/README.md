@@ -1,39 +1,21 @@
-# 2/20 simple bulk email send app
+# 3/20 simple bulk email send app
 ✅ Use Case
-Send thousands of emails. Each should be sent only once, even if retries or replays happen.
+Send tens of thousands of emails. Each should be at least once, even if failures, crashes, and retries happen.
 
 # Blog post link
-https://michaeloswald.beehiiv.com/p/2-of-20-temporal-app-challenge-using-temporal-in-a-custom-gpt-app-bb66
+https://michaeloswald.beehiiv.com/p/app-3-of-20-sending-10-000-emails-at-least-once-with-temporal
 
 # Youtube Video Link
-https://youtu.be/b51FHEH1YNI
+https://youtu.be/JLjYZQIhJ3Y
 
 ## Features
-- REST API made for storing retrieving and updating your need to remember things "your memories"
+- Send emails via post request
 - Temporal
 
 ## Technologies
-- ChatGPT (for the custom GPT app)
-- Java
-- Spring Boot
+- Java + Spring Boot
 - Temporal
-- DynamoDB (for event storage)
-
-## Sequence Diagram (POST API FLOW)
-
-```mermaid
-sequenceDiagram
-    participant MemoryGPT
-    participant REST API
-    participant Temporal
-    participant DynamoDB
-
-    MemoryGPT->>REST API: POST /api/webhook
-    REST API->>Temporal: Start Workflow
-    REST API-->>MemoryGPT: 200 OK
-    Temporal->>DynamoDB: Store Memory
-    DynamoDB-->>Temporal: Memory stored
- ```
+- [MailHog](https://github.com/mailhog/MailHog)
 
 ## Running locally:
 ```
@@ -44,21 +26,23 @@ docker-compose up
 
 # run this app:
 git clone https://github.com/michael-oswald/20-temporal-apps.git
-cd 20-apps/app-2-memory-api
+cd 20-apps/app-3-bulk-email-send
 ./mvnw spring-boot:run
 
-# dynamodb:
-You'll need to run a local dynamodb, or create a dynamodb table in your AWS account and set the table name as `gpt-memory`.
+# MailHog:
+docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
 
 # testing with curl:
-curl --location 'http://localhost:8081/api/memory' \
+curl --location 'localhost:8081/api/email/batch' \
 --header 'Content-Type: application/json' \
---data '{
-  "userId": "exampleUserId",
-  "uniqueMemoryId": "16f8df7e-0cb9-481b-9067-a69ed6ddc19e",
-  "text": "This is a test memory",
-  "category": "otherCategory",
-  "dueAt": "2023-12-31T23:59:59",
-  "status":"NEW"
-}'
+--data-raw '{
+  "uniqueEmailBatchId": "uniqueId1234" ,
+  "emails": [
+    {
+      "to": "user1@example.com",
+      "subject": "Subject 1",
+      "body": "Hello user 1"
+    }
+  ]
+}
 ```

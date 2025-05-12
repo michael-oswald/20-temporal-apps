@@ -4,7 +4,7 @@ import io.temporal.activity.ActivityInterface;
 import io.temporal.activity.ActivityMethod;
 
 @ActivityInterface
-public interface EmailActivities {
+public interface EmailActivity {
     @ActivityMethod
     void sendEmail(String emailId, String to, String body);
 }

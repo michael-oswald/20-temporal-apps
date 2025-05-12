@@ -1,7 +1,7 @@
 package com.example.email.config;
 
 
-import com.example.email.activities.EmailActivitiesImpl;
+import com.example.email.activities.EmailActivityImpl;
 import com.example.email.service.EmailService;
 import com.example.email.workflows.EmailBatchWorkflowImpl;
 import com.example.email.workflows.EmailCampaignWorkflowImpl;
@@ -49,7 +49,7 @@ public class TemporalConfig {
     }
 
     @Bean
-    public Worker worker(WorkerFactory workerFactory, EmailActivitiesImpl emailActivities) {
+    public Worker worker(WorkerFactory workerFactory, EmailActivityImpl emailActivities) {
         Worker worker = workerFactory.newWorker(taskQueue);
         worker.registerWorkflowImplementationTypes(EmailCampaignWorkflowImpl.class, EmailBatchWorkflowImpl.class);
         worker.registerActivitiesImplementations(emailActivities);
@@ -58,7 +58,7 @@ public class TemporalConfig {
     }
 
     @Bean
-    public EmailActivitiesImpl emailActivities(EmailService emailService) {
-        return new EmailActivitiesImpl(emailService);
+    public EmailActivityImpl emailActivities(EmailService emailService) {
+        return new EmailActivityImpl(emailService);
     }
 }
