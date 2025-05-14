@@ -1,0 +1,86 @@
+.seat-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.seat-group {
+    display: flex;
+    gap: 6px;
+}
+
+.aisle-gap {
+    width: 30px;
+}
+
+.seat {
+    width: 40px;
+    height: 40px;
+    background-color: #d4f7dc; /* available */
+    color: #333;
+    font-weight: bold;
+    border-radius: 4px;
+    border: 1px solid #999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+}
+
+.seat.held {
+    background-color: #ffe29a;
+    color: #8a5a00;
+}
+
+.seat.confirmed {
+    background-color: #ec0606;
+    color: #004b80;
+}
+
+.plane-outline {
+    background: #e0e7ef;
+    border-radius: 80px 80px 60px 60px / 120px 120px 60px 60px;
+    border: 4px solid #b0b8c1;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    padding: 40px 32px 60px 32px;
+    margin: 0 auto;
+    width: fit-content;
+    position: relative;
+    min-width: 340px;
+}
+
+.plane-outline:before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -38px;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    background: #e0e7ef;
+    border-radius: 50%;
+    border: 4px solid #b0b8c1;
+    z-index: 1;
+}
+
+.plane-outline:after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -30px;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background: #e0e7ef;
+    border-radius: 50%;
+    border: 4px solid #b0b8c1;
+    z-index: 1;
+}
+
+.plane-cabin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+}
