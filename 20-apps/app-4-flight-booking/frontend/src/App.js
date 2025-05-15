@@ -30,7 +30,7 @@ const App = () => {
 
         fetchSeats(); // initial fetch
 
-        const interval = setInterval(fetchSeats, 5000); // poll every 5s
+        const interval = setInterval(fetchSeats, 2000); // poll every 1 second
         return () => clearInterval(interval);
     }, []);
 
@@ -42,7 +42,7 @@ const App = () => {
         };
 
         fetchSeatStatus();
-        const interval = setInterval(fetchSeatStatus, 3000);
+        const interval = setInterval(fetchSeatStatus, 2000); // poll every 1 second
         return () => clearInterval(interval);
     }, []);
 
@@ -56,10 +56,16 @@ const App = () => {
         if (!userId) return alert('Enter user ID');
         try {
             const res = await fetch(`${API_BASE}/start/${userId}`, {method: 'POST'});
+            if (res.status === 409) {
+                setStatus('Booking failed: Plane is full. No seats available.');
+                setSeat(null);
+                setTimer(0);
+                return;
+            }
             const text = await res.text();
             setStatus('Seat reserved. Waiting for payment...');
-            setSeat('(assigned after confirmation)'); // or update if API returns it
-            setTimer(5 * 60); // 15 minutes
+            setSeat('(assigned after confirmation)');
+            setTimer(5 * 60);
         } catch (err) {
             setStatus('Booking failed');
         }

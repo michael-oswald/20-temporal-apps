@@ -32,7 +32,10 @@ public class SeatManagerWorkflowImpl implements SeatManagerWorkflow {
         }
 
         Iterator<String> it = availableSeats.iterator();
-        if (!it.hasNext()) throw new RuntimeException("No seats available");
+        if (!it.hasNext()) {
+            //log.info("no available seats for user {}", userId);
+            return;
+        }
 
         String seat = it.next();
         it.remove();
