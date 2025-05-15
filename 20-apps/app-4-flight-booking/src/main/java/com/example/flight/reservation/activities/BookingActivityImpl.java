@@ -1,7 +1,5 @@
 package com.example.flight.reservation.activities;
 
-import com.example.flight.reservation.workflows.SeatManagerWorkflow;
-import io.temporal.client.WorkflowClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +18,6 @@ public class BookingActivityImpl implements BookingActivity {
     @Autowired
     private DynamoDbClient dynamoDbClient;
 
-    @Autowired
-    private WorkflowClient workflowClient;
-
     @Override
     public void saveBookingToDatabase(String userId, String seatId) {
         Map<String, AttributeValue> item = new HashMap<>();
@@ -36,14 +31,5 @@ public class BookingActivityImpl implements BookingActivity {
 
         dynamoDbClient.putItem(request);
         logger.info("Persisted booking to DynamoDB: user={} seat={}", userId, seatId);
-    }
-
-    @Override
-    public String getHeldSeatFromSeatManager(String userId) {
-        SeatManagerWorkflow seatManager = workflowClient.newWorkflowStub(
-                SeatManagerWorkflow.class,
-                "SeatManagerWorkflow"
-        );
-        return seatManager.getHeldSeat(userId);
     }
 }

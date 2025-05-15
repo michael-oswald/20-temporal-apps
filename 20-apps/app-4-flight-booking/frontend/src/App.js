@@ -1,36 +1,24 @@
 import React, {useState, useEffect} from 'react';
 import SouthwestSeatMap from './SouthwestSeatMap';
 
-
 const API_BASE = 'http://localhost:8081/booking'; // adjust if needed
 
 const App = () => {
     const [userId, setUserId] = useState('');
     const [seat, setSeat] = useState(null);
     const [status, setStatus] = useState('');
-    const [timer, setTimer] = useState(0); // in seconds
     const [seatStatus, setSeatStatus] = useState({});
     const [availableSeats, setAvailableSeats] = useState([]);
 
     useEffect(() => {
-        let interval;
-        if (timer > 0) {
-            interval = setInterval(() => setTimer(t => t - 1), 1000);
-        }
-        return () => clearInterval(interval);
-    }, [timer]);
-
-    useEffect(() => {
         const fetchSeats = async () => {
-            //const res = await fetch(`${API_BASE.replace('/booking', '')}/seats/available`);
             const res = await fetch(`${API_BASE}/seats/available`, {method: 'GET'});
             const seats = await res.json();
             setAvailableSeats(seats);
         };
 
-        fetchSeats(); // initial fetch
-
-        const interval = setInterval(fetchSeats, 2000); // poll every 1 second
+        fetchSeats();
+        const interval = setInterval(fetchSeats, 2000);
         return () => clearInterval(interval);
     }, []);
 
@@ -38,82 +26,33 @@ const App = () => {
         const fetchSeatStatus = async () => {
             const res = await fetch(`http://localhost:8081/seats/status`);
             const data = await res.json();
-            setSeatStatus(data); // Expects format: { "1A": "CONFIRMED", "2B": "HELD", ... }
+            setSeatStatus(data);
         };
 
         fetchSeatStatus();
-        const interval = setInterval(fetchSeatStatus, 2000); // poll every 1 second
+        const interval = setInterval(fetchSeatStatus, 2000);
         return () => clearInterval(interval);
     }, []);
 
-    const formatTime = (seconds) => {
-        const m = String(Math.floor(seconds / 60)).padStart(2, '0');
-        const s = String(seconds % 60).padStart(2, '0');
-        return `${m}:${s}`;
-    };
-
-    const handleStartBooking = async () => {
+    const handleBook = async () => {
         if (!userId) return alert('Enter user ID');
         try {
-            const res = await fetch(`${API_BASE}/start/${userId}`, {method: 'POST'});
+            const res = await fetch(`${API_BASE}/book/${userId}`, {method: 'POST'});
             if (res.status === 409) {
                 setStatus('Booking failed: Plane is full. No seats available.');
                 setSeat(null);
-                setTimer(0);
                 return;
             }
             const text = await res.text();
-            setStatus('Seat reserved. Waiting for payment...');
-            setSeat('(assigned after confirmation)');
-            setTimer(5 * 60);
+            setStatus('Booking requested. Check seat map for confirmation.');
+            setSeat('Assigned after booking');
         } catch (err) {
             setStatus('Booking failed');
         }
     };
 
-    const handlePayment = async () => {
-        try {
-            const res = await fetch(`${API_BASE}/pay/${userId}`, {method: 'POST'});
-            const text = await res.text();
-            setStatus('Payment received. Booking confirmed!');
-            setSeat('Seat confirmed (check DB for real value)');
-            setTimer(0);
-        } catch (err) {
-            setStatus('Payment failed');
-        }
-    };
-
-    const handleCancel = async () => {
-        try {
-            const res = await fetch(`${API_BASE}/cancel/${userId}`, {method: 'POST'});
-            const text = await res.text();
-            setStatus('Booking cancelled.');
-            setSeat(null);
-            setTimer(0);
-        } catch (err) {
-            setStatus('Cancel failed');
-        }
-    };
-
     return (
         <div style={{padding: 30, fontFamily: 'sans-serif'}}>
-            <div style={{
-                position: 'absolute',
-                top: 16,
-                right: 24,
-                fontSize: 40,
-                fontWeight: 'bold',
-                background: 'rgba(255,255,255,0.95)',
-                color: '#1a237e',
-                padding: '12px 28px',
-                borderRadius: 16,
-                boxShadow: '0 2px 12px rgba(0,0,0,0.10)',
-                letterSpacing: 2,
-                zIndex: 10
-            }}>
-                ⏳ {timer > 0 ? formatTime(timer) : ''}
-            </div>
-
             <h2>✈️ Airline Seat Booking</h2>
 
             <input
@@ -125,9 +64,7 @@ const App = () => {
             />
 
             <div style={{marginTop: 20}}>
-                <button onClick={handleStartBooking} style={{marginRight: 10}}>Start Booking</button>
-                <button onClick={handlePayment} style={{marginRight: 10}}>Confirm Payment</button>
-                <button onClick={handleCancel}>Cancel Booking</button>
+                <button onClick={handleBook}>Book Seat</button>
             </div>
 
             <div style={{marginTop: 30}}>
@@ -137,46 +74,45 @@ const App = () => {
             <div style={{marginTop: 20}}>
                 <strong>Available Seats:</strong>&nbsp;
                 {availableSeats.length === 0 ? "No seats left" : availableSeats.length}
-                <br></br>
-                <br></br>
+                <br/><br/>
             </div>
             <div style={{display: 'flex', gap: 16, alignItems: 'center', justifyContent: 'center', marginBottom: 16}}>
-  <span style={{display: 'flex', alignItems: 'center', gap: 4}}>
-    <span style={{
-        width: 20,
-        height: 20,
-        background: '#d4f7dc',
-        border: '1px solid #999',
-        borderRadius: 4,
-        display: 'inline-block'
-    }}></span>
-    Available
-  </span>
                 <span style={{display: 'flex', alignItems: 'center', gap: 4}}>
-    <span style={{
-        width: 20,
-        height: 20,
-        background: '#ffe29a',
-        border: '1px solid #999',
-        borderRadius: 4,
-        display: 'inline-block'
-    }}></span>
-    Booking in Progress
-  </span>
+                    <span style={{
+                        width: 20,
+                        height: 20,
+                        background: '#d4f7dc',
+                        border: '1px solid #999',
+                        borderRadius: 4,
+                        display: 'inline-block'
+                    }}></span>
+                    Available
+                </span>
                 <span style={{display: 'flex', alignItems: 'center', gap: 4}}>
-    <span style={{
-        width: 20,
-        height: 20,
-        background: '#ec0606',
-        border: '1px solid #999',
-        borderRadius: 4,
-        display: 'inline-block'
-    }}></span>
-    Booked
-  </span>
+                    <span style={{
+                        width: 20,
+                        height: 20,
+                        background: '#ffe29a',
+                        border: '1px solid #999',
+                        borderRadius: 4,
+                        display: 'inline-block'
+                    }}></span>
+                    Booking in Progress
+                </span>
+                <span style={{display: 'flex', alignItems: 'center', gap: 4}}>
+                    <span style={{
+                        width: 20,
+                        height: 20,
+                        background: '#ec0606',
+                        border: '1px solid #999',
+                        borderRadius: 4,
+                        display: 'inline-block'
+                    }}></span>
+                    Booked
+                </span>
             </div>
             <div>
-                <strong>💺Seat Map:</strong>
+                <strong>Seat Map:</strong>
                 <div style={{marginTop: 20}}>
                     <SouthwestSeatMap seatStatus={seatStatus} allBooked={availableSeats.length === 0} />
                 </div>

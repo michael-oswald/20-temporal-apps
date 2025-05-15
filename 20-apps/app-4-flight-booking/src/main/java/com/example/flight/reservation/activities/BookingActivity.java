@@ -7,6 +7,4 @@ import io.temporal.activity.ActivityMethod;
 public interface BookingActivity {
     @ActivityMethod
     void saveBookingToDatabase(String userId, String seatId);
-    @ActivityMethod
-    String getHeldSeatFromSeatManager(String userId);
 }

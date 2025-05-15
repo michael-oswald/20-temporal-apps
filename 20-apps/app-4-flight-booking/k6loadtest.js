@@ -10,22 +10,13 @@ export default function () {
     const userId = uuidv4();
 
     // Start booking
-    const startRes = http.post(`${BASE_URL}/start/${userId}`);
+    const startRes = http.post(`${BASE_URL}/book/${userId}`);
     if (!startRes || startRes.status === 409) {
         denied.add(1);
         console.log(`DENIED: ${userId}`);
         return;
     }
     check(startRes, {
-        'booking started or already running': (r) => r && r.status === 200,
+        'booking submitted': (r) => r && r.status === 200,
     });
-
-    sleep(Math.random() * 3);
-
-    const payRes = http.post(`${BASE_URL}/pay/${userId}`);
-    if (payRes) {
-        check(payRes, {
-            'payment received': (r) => r && r.status === 200,
-        });
-    }
 }

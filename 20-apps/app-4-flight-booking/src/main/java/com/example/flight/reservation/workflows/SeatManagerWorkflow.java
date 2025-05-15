@@ -15,21 +15,12 @@ SeatManagerWorkflow {
     @WorkflowMethod
     void start();
 
-    @SignalMethod
-    void requestSeat(String userId);
-
-    @SignalMethod
-    void confirmSeat(String userId);
-
-    @SignalMethod
-    void releaseSeat(String userId);
-
     @QueryMethod
     List<String> getAvailableSeats();
 
-    @QueryMethod(name = "getHeldSeat")
-    String getHeldSeat(String userId);
-
     @QueryMethod
     Map<String, String> getSeatStatus();
+
+    @SignalMethod
+    void requestBooking(String userId);
 }

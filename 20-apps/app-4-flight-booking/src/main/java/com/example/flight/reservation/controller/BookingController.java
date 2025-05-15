@@ -1,11 +1,9 @@
 package com.example.flight.reservation.controller;
 
 
-import com.example.flight.reservation.workflows.BookingWorkflow;
 import com.example.flight.reservation.workflows.SeatManagerWorkflow;
 import io.grpc.StatusRuntimeException;
 import io.temporal.client.WorkflowClient;
-import io.temporal.client.WorkflowOptions;
 import io.temporal.client.WorkflowQueryException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,52 +23,18 @@ public class BookingController {
         this.workflowClient = workflowClient;
     }
 
-    @PostMapping("/start/{userId}")
+    @PostMapping("/book/{userId}")
     public ResponseEntity<String> startBooking(@PathVariable String userId) {
         SeatManagerWorkflow seatManager = workflowClient.newWorkflowStub(
-                SeatManagerWorkflow.class,
-                "SeatManagerWorkflow"
+                SeatManagerWorkflow.class, "SeatManagerWorkflow"
         );
         List<String> availableSeats = seatManager.getAvailableSeats();
-        if (availableSeats == null || availableSeats.isEmpty()) {
+        if (availableSeats.isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("No seats available. Plane is full.");
+                    .body("Booking failed: Plane is full. No seats available.");
         }
-
-        BookingWorkflow bookingWorkflow = workflowClient.newWorkflowStub(
-                BookingWorkflow.class,
-                WorkflowOptions.newBuilder()
-                        .setWorkflowId("BookingWorkflow_" + userId)
-                        .setTaskQueue("BOOKING_TASK_QUEUE")
-                        .build()
-        );
-
-        try {
-            WorkflowClient.start(bookingWorkflow::book, userId);
-        } catch (io.temporal.client.WorkflowExecutionAlreadyStarted e) {
-            // Workflow is already running, safe to ignore
-        }
-        return ResponseEntity.ok("Booking started for user " + userId);
-    }
-
-    @PostMapping("/pay/{userId}")
-    public String completePayment(@PathVariable String userId) {
-        BookingWorkflow workflow = workflowClient.newWorkflowStub(
-                BookingWorkflow.class,
-                "BookingWorkflow_" + userId
-        );
-        workflow.paymentReceived();
-        return "Payment received for " + userId;
-    }
-
-    @PostMapping("/cancel/{userId}")
-    public String cancelBooking(@PathVariable String userId) {
-        BookingWorkflow workflow = workflowClient.newWorkflowStub(
-                BookingWorkflow.class,
-                "BookingWorkflow_" + userId
-        );
-        workflow.userCancelled();
-        return "Booking cancelled for " + userId;
+        seatManager.requestBooking(userId);
+        return ResponseEntity.ok("Booking request submitted for user " + userId);
     }
 
     @GetMapping("/seats/available")

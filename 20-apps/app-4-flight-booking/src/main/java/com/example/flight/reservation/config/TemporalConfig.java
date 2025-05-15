@@ -23,12 +23,6 @@ public class TemporalConfig {
     @Value("${temporal.namespace:default}")
     private String temporalNamespace;
 
-    @Value("${temporal.taskqueue:BOOKING_TASK_QUEUE}")
-    private String bookingTaskQueue;
-
-    @Value("${temporal.taskqueue:SEAT_TASK_QUEUE}")
-    private String seatTaskQueue;
-
     @Bean
     public WorkflowServiceStubs workflowServiceStubs() {
         return WorkflowServiceStubs.newInstance(
@@ -49,11 +43,11 @@ public class TemporalConfig {
     public WorkerFactory workerFactory(WorkflowClient workflowClient, BookingActivityImpl bookingActivity) {
         WorkerFactory workerFactory = WorkerFactory.newInstance(workflowClient);
 
-        Worker seatWorker = workerFactory.newWorker(seatTaskQueue);
+        Worker seatWorker = workerFactory.newWorker("SEAT_TASK_QUEUE");
         seatWorker.registerWorkflowImplementationTypes(SeatManagerWorkflowImpl.class);
 
-        Worker bookingWorker = workerFactory.newWorker(bookingTaskQueue);
-        bookingWorker.registerWorkflowImplementationTypes(BookingWorkflowImpl.class);
+        Worker bookingWorker = workerFactory.newWorker("BOOKING_TASK_QUEUE");
+        bookingWorker.registerWorkflowImplementationTypes(BookingWorkflowImpl.class, SeatManagerWorkflowImpl.class);
         bookingWorker.registerActivitiesImplementations(bookingActivity);
 
         workerFactory.start();
