@@ -9,6 +9,9 @@ const App = () => {
     const [status, setStatus] = useState('');
     const [seatStatus, setSeatStatus] = useState({});
     const [availableSeats, setAvailableSeats] = useState([]);
+    const [failedBookings, setFailedBookings] = useState({});
+    const availableCount = Object.values(seatStatus).filter(s => s === 'AVAILABLE').length;
+    const bookedCount = Object.values(seatStatus).filter(s => s === 'CONFIRMED').length;
 
     useEffect(() => {
         const fetchSeats = async () => {
@@ -31,6 +34,17 @@ const App = () => {
 
         fetchSeatStatus();
         const interval = setInterval(fetchSeatStatus, 2000);
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        const fetchFailed = async () => {
+            const res = await fetch(`${API_BASE}/failed`);
+            const data = await res.json();
+            setFailedBookings(data);
+        };
+        fetchFailed();
+        const interval = setInterval(fetchFailed, 2000);
         return () => clearInterval(interval);
     }, []);
 
@@ -76,45 +90,50 @@ const App = () => {
                 {availableSeats.length === 0 ? "No seats left" : availableSeats.length}
                 <br/><br/>
             </div>
-            <div style={{display: 'flex', gap: 16, alignItems: 'center', justifyContent: 'center', marginBottom: 16}}>
-                <span style={{display: 'flex', alignItems: 'center', gap: 4}}>
-                    <span style={{
-                        width: 20,
-                        height: 20,
-                        background: '#d4f7dc',
-                        border: '1px solid #999',
-                        borderRadius: 4,
-                        display: 'inline-block'
-                    }}></span>
-                    Available
-                </span>
-                <span style={{display: 'flex', alignItems: 'center', gap: 4}}>
-                    <span style={{
-                        width: 20,
-                        height: 20,
-                        background: '#ffe29a',
-                        border: '1px solid #999',
-                        borderRadius: 4,
-                        display: 'inline-block'
-                    }}></span>
-                    Booking in Progress
-                </span>
-                <span style={{display: 'flex', alignItems: 'center', gap: 4}}>
-                    <span style={{
-                        width: 20,
-                        height: 20,
-                        background: '#ec0606',
-                        border: '1px solid #999',
-                        borderRadius: 4,
-                        display: 'inline-block'
-                    }}></span>
-                    Booked
-                </span>
-            </div>
-            <div>
-                <strong>Seat Map:</strong>
-                <div style={{marginTop: 20}}>
-                    <SouthwestSeatMap seatStatus={seatStatus} allBooked={availableSeats.length === 0} />
+            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, marginTop: 30}}>
+                <div>
+                    <strong>Seat Map:</strong>
+                    <div style={{display: 'flex', gap: 16, alignItems: 'center', margin: '16px 0 0 0'}}>
+            <span style={{display: 'flex', alignItems: 'center', gap: 4}}>
+                <span style={{
+                    width: 20,
+                    height: 20,
+                    background: '#d4f7dc',
+                    border: '1px solid #999',
+                    borderRadius: 4,
+                    display: 'inline-block'
+                }}></span>
+                Available ({availableCount})
+            </span>
+                        <span style={{display: 'flex', alignItems: 'center', gap: 4}}>
+                <span style={{
+                    width: 20,
+                    height: 20,
+                    background: '#ec0606',
+                    border: '1px solid #999',
+                    borderRadius: 4,
+                    display: 'inline-block'
+                }}></span>
+                Booked ({bookedCount})
+            </span>
+                    </div>
+                    <div style={{marginTop: 20}}>
+                        <SouthwestSeatMap seatStatus={seatStatus} allBooked={availableSeats.length === 0}/>
+                    </div>
+                </div>
+                <div>
+                    <strong>😢 Failed Bookings:</strong> {Object.keys(failedBookings).length}
+                    {Object.keys(failedBookings).length === 0 ? (
+                        <div>None</div>
+                    ) : (
+                        <ul>
+                            {Object.entries(failedBookings).map(([user, reason]) => (
+                                <li key={user}>
+                                    User <b>{user}</b>: {reason}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </div>
         </div>

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -49,5 +50,14 @@ public class BookingController {
             // Workflow is terminated or not running
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Seat manager workflow is not running", e);
         }
+    }
+
+    @GetMapping("/failed")
+    public ResponseEntity<Map<String, String>> getAllFailedBookings() {
+        SeatManagerWorkflow seatManager = workflowClient.newWorkflowStub(
+            SeatManagerWorkflow.class, "SeatManagerWorkflow"
+        );
+        Map<String, String> failed = seatManager.getFailedBookings();
+        return ResponseEntity.ok(failed);
     }
 }

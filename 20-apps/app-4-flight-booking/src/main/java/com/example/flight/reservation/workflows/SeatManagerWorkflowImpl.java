@@ -2,17 +2,15 @@ package com.example.flight.reservation.workflows;
 
 import io.temporal.workflow.ChildWorkflowOptions;
 import io.temporal.workflow.Workflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class SeatManagerWorkflowImpl implements SeatManagerWorkflow {
 
-    private static final Logger log = LoggerFactory.getLogger(SeatManagerWorkflowImpl.class);
     private final Set<String> availableSeats = new LinkedHashSet<>();
     private final Set<String> confirmedSeats = new HashSet<>();
     private final Queue<String> bookingRequests = new LinkedList<>();
+    private final Map<String, String> failedBookings = new HashMap<>();
 
     @Override
     public void start() {
@@ -42,8 +40,9 @@ public class SeatManagerWorkflowImpl implements SeatManagerWorkflow {
                                 .build()
                 );
                 booking.book(userId, seat);
+            } else {
+                failedBookings.put(userId, "NO_SEATS_AVAILABLE");
             }
-            // else: no seats available, optionally notify user
         }
     }
 
@@ -67,5 +66,11 @@ public class SeatManagerWorkflowImpl implements SeatManagerWorkflow {
             statusMap.put(seat, "CONFIRMED");
         }
         return statusMap;
+    }
+
+
+    @Override
+    public Map<String, String> getFailedBookings() {
+        return new HashMap<>(failedBookings);
     }
 }

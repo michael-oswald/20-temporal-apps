@@ -23,4 +23,7 @@ SeatManagerWorkflow {
 
     @SignalMethod
     void requestBooking(String userId);
+
+    @QueryMethod
+    Map<String, String> getFailedBookings();
 }
