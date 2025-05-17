@@ -1,10 +1,10 @@
 import React from 'react';
-import './SouthwestSeatMap.css';
+import './PlaneSeatMap.css';
 
 const rows = Array.from({ length: 30 }, (_, i) => i + 1);
 const seatLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-const SouthwestSeatMap = ({ seatStatus = {}, allBooked = false }) => {
+const PlaneSeatMap = ({ seatStatus = {}, allBooked = false }) => {
     return (
         <div className="plane-outline">
             <div className="plane-cabin">
@@ -40,4 +40,4 @@ const SouthwestSeatMap = ({ seatStatus = {}, allBooked = false }) => {
     );
 };
 
-export default SouthwestSeatMap;
+export default PlaneSeatMap;

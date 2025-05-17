@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import SouthwestSeatMap from './SouthwestSeatMap';
+import PlaneSeatMap from './PlaneSeatMap';
 
 const API_BASE = 'http://localhost:8081/booking'; // adjust if needed
 
@@ -118,7 +118,7 @@ const App = () => {
             </span>
                     </div>
                     <div style={{marginTop: 20}}>
-                        <SouthwestSeatMap seatStatus={seatStatus} allBooked={availableSeats.length === 0}/>
+                        <PlaneSeatMap seatStatus={seatStatus} allBooked={availableSeats.length === 0}/>
                     </div>
                 </div>
                 <div>
