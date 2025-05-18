@@ -32,6 +32,30 @@ src/main/java/ — Spring Boot backend and Temporal workflows
 frontend/ — React frontend for seat booking
 README.md — This file
 
+# Sequqnce Diagaram
+```mermaid
+sequenceDiagram
+    participant Client as Client (Frontend)
+    participant API as BookingController (Spring Boot)
+    participant SeatMgr as SeatManagerWorkflow
+    participant BookingWF as BookingWorkflow
+
+    Client->>API: POST /booking/book/{userId}
+    API->>SeatMgr: requestBooking(userId)
+    API-->>Client: 200 OK
+    Note right of SeatMgr: Adds userId to bookingRequests queue
+    SeatMgr->>SeatMgr: Polls bookingRequests queue
+    alt Seat available
+        SeatMgr->>BookingWF: book(userId, seat) (Child Workflow)
+        BookingWF-->>SeatMgr: Booking confirmed
+        SeatMgr->>API: (No direct response, async)
+    else No seats available
+        SeatMgr->>SeatMgr: failedBookings[userId] = "NO_SEATS_AVAILABLE"
+        SeatMgr->>API: (No direct response, async)
+    end
+    
+```
+
 ## 🚀 Running Locally
 ### 1. Start Temporal Server
 ```sh

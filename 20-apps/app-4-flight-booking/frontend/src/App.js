@@ -21,7 +21,7 @@ const App = () => {
         };
 
         fetchSeats();
-        const interval = setInterval(fetchSeats, 2000);
+        const interval = setInterval(fetchSeats, 1000);
         return () => clearInterval(interval);
     }, []);
 
@@ -33,7 +33,7 @@ const App = () => {
         };
 
         fetchSeatStatus();
-        const interval = setInterval(fetchSeatStatus, 2000);
+        const interval = setInterval(fetchSeatStatus, 1000);
         return () => clearInterval(interval);
     }, []);
 
@@ -44,7 +44,7 @@ const App = () => {
             setFailedBookings(data);
         };
         fetchFailed();
-        const interval = setInterval(fetchFailed, 2000);
+        const interval = setInterval(fetchFailed, 1000);
         return () => clearInterval(interval);
     }, []);
 

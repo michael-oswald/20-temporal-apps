@@ -29,11 +29,7 @@ public class BookingController {
         SeatManagerWorkflow seatManager = workflowClient.newWorkflowStub(
                 SeatManagerWorkflow.class, "SeatManagerWorkflow"
         );
-        List<String> availableSeats = seatManager.getAvailableSeats();
-        if (availableSeats.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Booking failed: Plane is full. No seats available.");
-        }
+
         seatManager.requestBooking(userId);
         return ResponseEntity.ok("Booking request submitted for user " + userId);
     }
