@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>bulk-email-send</artifactId>
+	<artifactId>flight-booking</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>bulk-email-send</name>
-	<description>bulk-email-send</description>
+	<name>flight-booking</name>
+	<description>flight-booking</description>
 	<url/>
 	<licenses>
 		<license/>
