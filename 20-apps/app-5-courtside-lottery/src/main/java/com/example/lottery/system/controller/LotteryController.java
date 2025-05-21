@@ -7,6 +7,8 @@ import io.temporal.client.WorkflowStub;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -21,14 +23,29 @@ public class LotteryController {
         this.workflowClient = workflowClient;
     }
 
-    @PostMapping("/enter/{userId}")
-    public ResponseEntity<String> enterLottery(@PathVariable String userId) {
+    @PostMapping("/enter")
+    public ResponseEntity<String> enterLottery(@RequestBody String csvUserIds) {
+        String[] userIds = csvUserIds.split(",");
+        if (userIds.length > 1000) {
+            return ResponseEntity.badRequest().body("Too many users. Maximum is 1000");
+        }
+
+        var set = new HashSet<>(Arrays.asList(userIds));
+        if (set.size() != userIds.length) {
+            return ResponseEntity.badRequest().body("Duplicate user IDs found");
+        }
+        set = null; // garbage collect
+
         LotteryManagerWorkflow lotteryManagerWorkflow = workflowClient.newWorkflowStub(
                 LotteryManagerWorkflow.class, "LotteryManagerWorkflow"
         );
 
-        lotteryManagerWorkflow.enter(userId);
-        return ResponseEntity.ok("Lottery request for user " + userId);
+        List<String> trimmedUserIds = Arrays.stream(userIds)
+                .map(String::trim)
+                .toList();
+
+        lotteryManagerWorkflow.enter(trimmedUserIds);
+        return ResponseEntity.ok(userIds.length + " users entered the lottery");
     }
 
     @PostMapping("/close")

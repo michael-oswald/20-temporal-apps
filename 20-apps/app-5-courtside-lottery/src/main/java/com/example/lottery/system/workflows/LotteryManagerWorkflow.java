@@ -16,5 +16,5 @@ public interface LotteryManagerWorkflow {
     void close();
 
     @SignalMethod
-    void enter(String userId);
+    void enter(List<String> userIds);
 }
