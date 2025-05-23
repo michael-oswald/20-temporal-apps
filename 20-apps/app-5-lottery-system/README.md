@@ -32,26 +32,33 @@ A lottery system for managing lottery draws, user enters 2 parameters: number of
 - `src/main/java/` — Spring Boot backend and Temporal workflows
 - `frontend/` — React frontend for lottery system
 
-## 📝 Sequence Diagram
+## 📝 Sequence Diagrams
+
+### Simple Lottery (No Temporal Workflow)
 ```mermaid
 sequenceDiagram
     participant Client as Client (Frontend)
-    participant API as BookingController (Spring Boot)
-    participant SeatMgr as SeatManagerWorkflow
-    participant BookingWF as BookingWorkflow
+    participant API as LotteryController (Spring Boot)
 
-    Client->>API: POST /booking/book/{userId}
-    API->>SeatMgr: requestBooking(userId)
-    API-->>Client: 200 OK
-    Note right of SeatMgr: Adds userId to bookingRequests queue
-    SeatMgr->>SeatMgr: Polls bookingRequests queue
-    alt Seat available
-        SeatMgr->>BookingWF: book(userId, seat) (Child Workflow)
-        BookingWF-->>SeatMgr: Booking confirmed
-        SeatMgr->>API: (No direct response, async)
-    else No seats available
-        SeatMgr->>SeatMgr: failedBookings[userId] = "NO_SEATS_AVAILABLE"
-        SeatMgr->>API: (No direct response, async)
+    Client->>API: POST /lottery/enterSimple
+    API->>API: Validate request, check for duplicates
+    API->>API: Shuffle and pick winners
+    API-->>Client: 200 OK (List of winners)
+```
+
+### Temporal Lottery (With Workflow)
+```mermaid
+sequenceDiagram
+    participant Client as Client (Frontend)
+    participant API as LotteryController (Spring Boot)
+    participant Temporal as LotteryManagerWorkflow (Temporal)
+    
+    Client->>API: POST /lottery/enter
+    API->>API: Validate request, check daily limit, check for duplicates
+    API->>Temporal: Start LotteryManagerWorkflow(numWinners, userIds)
+    alt Workflow completes quickly
+        Temporal-->>API: List of winners
+        API-->>Client: 200 OK (List of winners)
     end
 ```
 
