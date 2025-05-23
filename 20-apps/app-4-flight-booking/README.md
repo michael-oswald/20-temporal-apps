@@ -4,10 +4,10 @@
 A bulletproof flight seat reservation system. Each seat can be reserved at most once, even in the presence of failures, crashes, and retries.
 
 ## 📖 Blog Post
-*Coming soon!*
+https://michaeloswald.beehiiv.com/p/temporal-app-4-of-20-180-seats-400-people-the-last-plane-is-leaving-ea4b
 
 ## 🎥 YouTube Video
-*Coming soon!*
+https://youtu.be/Y21kEdv6YLc?si=BLKc3AfJQ_RMNMWt
 
 ## ✨ Features
 - Reserve seats with strong consistency guarantees
