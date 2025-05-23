@@ -7,6 +7,7 @@ import com.example.lottery.system.workflows.LotteryManagerWorkflow;
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowOptions;
 import io.temporal.client.WorkflowStub;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/lottery")
 public class LotteryController {
@@ -24,7 +25,7 @@ public class LotteryController {
     private final WorkflowClient workflowClient;
     private final LotteryLimitService lotteryLimitService;
 
-    public LotteryController(WorkflowClient workflowClient, LotteryLimitService lotteryLimitService) {
+    public LotteryController(@Lazy WorkflowClient workflowClient, LotteryLimitService lotteryLimitService) {
         this.workflowClient = workflowClient;
         this.lotteryLimitService = lotteryLimitService;
     }
@@ -61,7 +62,6 @@ public class LotteryController {
 
         return ResponseEntity.ok(winners);
     }
-
 
     @PostMapping("/enter")
     public ResponseEntity<?> enterLottery(@RequestBody LotteryRequest lotteryRequest) {

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+// use this when deploying outside of local:
+// const API_BASE = '/lottery';
 const API_BASE = 'http://localhost:8081/lottery';
 const DAILY_LIMIT = 500;
 
@@ -29,7 +31,7 @@ const App = () => {
     const [error, setError] = useState('');
     const [submitted, setSubmitted] = useState(false);
     const [remaining, setRemaining] = useState(null);
-    const [backendType, setBackendType] = useState('simple'); // 'simple' or 'temporal'
+    const [backendType, setBackendType] = useState('simple');
 
     const fetchRemaining = async () => {
         try {
@@ -115,6 +117,19 @@ const App = () => {
         setSubmitted(false);
     };
 
+    // Responsive styles
+    const responsiveContainer = {
+        background: '#fff',
+        borderRadius: 18,
+        boxShadow: '0 4px 32px rgba(0,0,0,0.08)',
+        padding: 40,
+        minWidth: 0,
+        maxWidth: 400,
+        width: '100%',
+        marginTop: 60,
+        boxSizing: 'border-box'
+    };
+
     return (
         <div style={{
             minHeight: '100vh',
@@ -123,24 +138,55 @@ const App = () => {
             alignItems: 'center',
             justifyContent: 'center',
             fontFamily: 'Roboto, sans-serif',
-            position: 'relative'
+            position: 'relative',
+            flexDirection: 'column'
         }}>
-            <div style={{
-                background: '#fff',
-                borderRadius: 18,
-                boxShadow: '0 4px 32px rgba(0,0,0,0.08)',
-                padding: 40,
-                minWidth: 350,
-                maxWidth: 400,
-                width: '100%'
+            {/* Responsive global styles */}
+            <style>
+                {`
+                @media (max-width: 600px) {
+                    .lottery-container {
+                        padding: 18px 6px !important;
+                        max-width: 98vw !important;
+                        margin-top: 48px !important;
+                    }
+                    .top-note {
+                        font-size: 14px !important;
+                        padding: 10px 2px !important;
+                    }
+                    .footer-note {
+                        font-size: 13px !important;
+                        padding: 8px 0 !important;
+                    }
+                }
+                `}
+            </style>
+            {/* Top algorithm note */}
+            <div className="top-note" style={{
+                width: '100%',
+                background: '#fffbe6',
+                color: '#8a6d3b',
+                padding: '14px 0',
+                fontSize: 16,
+                fontWeight: 500,
+                textAlign: 'center',
+                borderBottom: '1px solid #ffe58f',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: 200
             }}>
+                The app randomly shuffles all participants and then selects the first N as winners, ensuring each participant has an equal chance.
+            </div>
+            <div className="lottery-container" style={responsiveContainer}>
                 {/* Backend Toggle */}
                 <div style={{
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
                     marginBottom: 18,
-                    gap: 16
+                    gap: 16,
+                    flexWrap: 'wrap'
                 }}>
                     <span style={{ fontWeight: 500, color: '#444' }}>Backend:</span>
                     <button
@@ -339,7 +385,7 @@ const App = () => {
                 )}
             </div>
             {/* Footer */}
-            <footer style={{
+            <footer className="footer-note" style={{
                 position: 'fixed',
                 left: 0,
                 bottom: 0,
@@ -354,12 +400,12 @@ const App = () => {
             }}>
                 Made by Michael Oswald &nbsp;|&nbsp;
                 <a
-                    href="https://github.com/michael-oswald/lottery-system"
+                    href="https://github.com/michael-oswald/20-temporal-apps/tree/main/20-apps/app-5-lottery-system"
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ color: '#0078ff', textDecoration: 'underline' }}
                 >
-                    View Code
+                    View Code on Github
                 </a>
             </footer>
         </div>
