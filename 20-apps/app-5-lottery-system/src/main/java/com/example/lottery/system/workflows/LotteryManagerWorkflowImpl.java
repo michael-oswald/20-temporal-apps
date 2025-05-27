@@ -10,13 +10,11 @@ public class LotteryManagerWorkflowImpl implements LotteryManagerWorkflow {
 
     private final Set<String> participants = new HashSet<>();
     private final List<String> winners = new ArrayList<>();
-    private boolean isLotteryActive = false;
     private int numWinners = 0;
 
   @Override
   public List<String> start(Integer numWinners, List<String> userIds) {
       this.numWinners = numWinners;
-      isLotteryActive = true;
       logger.info("Lottery workflow started with {} winners to be selected", numWinners);
 
       // Method now handles the entire workflow
@@ -25,7 +23,6 @@ public class LotteryManagerWorkflowImpl implements LotteryManagerWorkflow {
       participants.addAll(userIds);
       // Select winners directly
       selectWinners();
-      isLotteryActive = false;
 
       logger.info("Lottery workflow finished, selected {} winners", winners.size());
       return Collections.unmodifiableList(winners);

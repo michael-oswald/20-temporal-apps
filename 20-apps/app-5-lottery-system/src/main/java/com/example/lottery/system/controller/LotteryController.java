@@ -82,7 +82,6 @@ public class LotteryController {
         if (set.size() != userIds.length) {
             return ResponseEntity.badRequest().body("Duplicate user IDs found");
         }
-        set = null; // garbage collect
 
         String workflowId = "LMW" + UUID.randomUUID();
         LotteryManagerWorkflow lotteryManagerWorkflow = workflowClient.newWorkflowStub(

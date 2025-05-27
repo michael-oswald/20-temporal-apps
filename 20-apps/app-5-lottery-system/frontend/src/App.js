@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 // use this when deploying outside of local:
-// const API_BASE = '/lottery';
-const API_BASE = 'http://localhost:8081/lottery';
+const API_BASE = '/lottery';
+//const API_BASE = 'http://localhost:8081/lottery';
 const DAILY_LIMIT = 500;
 
 const Spinner = () => (
@@ -393,7 +393,7 @@ const App = () => {
                 background: '#f8fafc',
                 color: '#444',
                 textAlign: 'center',
-                padding: '12px 0',
+                padding: '12px 0 32px 0',
                 fontSize: 15,
                 borderTop: '1px solid #e0e0e0',
                 zIndex: 100
@@ -407,6 +407,14 @@ const App = () => {
                 >
                     View Code on Github
                 </a>
+                <div style={{
+                    marginTop: 10,
+                    color: '#888',
+                    fontSize: 13,
+                    fontStyle: 'italic'
+                }}>
+                    This app is a demo application for demonstration purposes only and is not intended for real production use.
+                </div>
             </footer>
         </div>
     );
