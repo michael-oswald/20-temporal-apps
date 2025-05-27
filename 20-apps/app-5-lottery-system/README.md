@@ -1,5 +1,6 @@
 # Lottery System App (Temporal App Challenge 5/20)
 
+## This app is a demo application for demonstration purposes only and is not intended for real production use.
 ## Live public url: https://www.freelotterypicker.com/
 ![img.png](img.png)
 
