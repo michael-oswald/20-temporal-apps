@@ -4,6 +4,7 @@
 Dynamic project management tool, 2 goals: 1. clear view of where the project is at (all stakeholders can easily see), 2. simulate project impact of scope increasing in a project
 
 ## 🎥 YouTube Video
+https://youtu.be/N8BXTCGxXCk
 
 ## ✨ Features
 - Create and manage projects with tasks and tracks
