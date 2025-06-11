@@ -51,7 +51,7 @@ npm start
 ```
 
 ### 4. DynamoDB Setup
-Need a DynamoDB table for confirmed bookings. You can create it using the AWS console or AWS CLI.
+Need a DynamoDB table for project state. You can create it using the AWS console or AWS CLI.
 Table should be named `akaripm`
 
 
